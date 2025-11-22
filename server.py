@@ -1,3 +1,7 @@
+''' Executing this function initiates the application of emotion detector 
+    to be executed over the Flask channel and deployed on
+    localhost:5000.
+'''
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
@@ -5,20 +9,28 @@ app = Flask("Emotion Detector")
 
 @app.route("/emotionDetector")
 def emo_detector():
-
+    ''' This code receives the text from the HTML interface and 
+        runs emotion detection over it using emotion_detector()
+        function. The output returned verious emotion in the sentence
+        and the dominant emotion
+    '''
     text_to_analyze=request.args.get('textToAnalyze')
     response=emotion_detector(text_to_analyze)
     domemo=response['dominant_emotion']
     del response['dominant_emotion']
     if domemo is None:
-        return "Invalid text! Please try again!."
+        result= "Invalid text! Please try again!."
     else:
-        return "For the given text, the system response is {}. The dominant emotion is {}.".format( response, domemo)
+        result= f"""For the given text, the system response is {response}.
+         The dominant emotion is {domemo}."""
+    return result
 
 @app.route("/")
 def render_index_page():
+    ''' This function initiates the rendering of the main application
+        page over the Flask channel
+    '''
     return render_template('index.html')
-    
 
 if __name__ == "__main__":
-     app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
